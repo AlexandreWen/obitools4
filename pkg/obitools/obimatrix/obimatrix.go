@@ -110,12 +110,15 @@ func (data *MatrixData) Update(s *obiseq.BioSequence, mapkey string, strict bool
 		} else {
 			log.Panicf("Attribute %s is not a map in the sequence %s", mapkey, s.Id())
 		}
-	} else {
-		if strict {
-			log.Panicf("Attribute %s does not exist in the sequence %s", mapkey, s.Id())
-		}
-		data.matrix[sid] = make(map[string]interface{})
+		// I think this should be an error because the attribute can be get even if it is
+		// not present in every sequence
 	}
+	// else {
+	// 	if strict {
+	// 		log.Panicf("Attribute %s does not exist in the sequence %s", mapkey, s.Id())
+	// 	}
+	// 	data.matrix[sid] = make(map[string]interface{})
+	// }
 
 	attrs := make(map[string]interface{}, len(data.attributeList))
 	for _, attrname := range data.attributeList {

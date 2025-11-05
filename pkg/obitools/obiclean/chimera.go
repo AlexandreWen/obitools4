@@ -186,8 +186,8 @@ func AnnotateChimera(samples map[string]*[]*seqPCR) {
 			}
 
 			// Select parents with longuest prefix/suffix
-			// Condition prefix+suffix covers the sequence and sequence not include into parent
-			if maxLeft >= L-maxRight && maxLeft > 0 && maxRight < L {
+			// Condition prefix+suffix covers the sequence and sequence not include into parent and parents different
+			if maxLeft >= L-maxRight && maxLeft > 0 && maxRight < L && nameLeft != nameRight {
 
 				chimeraMap := GetChimera(s.Sequence)
 				// overlap sequence
@@ -201,3 +201,72 @@ func AnnotateChimera(samples map[string]*[]*seqPCR) {
 		w(sn, sqs)
 	}
 }
+
+// func AnnotateChimera(samples map[string]*[]*seqPCR) {
+
+// 	w := func(sample string, seqs *[]*seqPCR) {
+// 		ls := len(*seqs)
+// 		cp := make([]int, ls)
+// 		cs := make([]int, ls)
+
+// 		pcrs := make([]*seqPCR, 0, ls)
+
+// 		for _, s := range *seqs {
+// 			if len(s.Edges) == 0 {
+// 				pcrs = append(pcrs, s)
+// 			}
+// 		}
+
+// 		lp := len(pcrs)
+
+// 		sort.Slice(pcrs, func(i, j int) bool {
+// 			return pcrs[i].Weight < pcrs[j].Weight
+// 		})
+
+// 		for i, s := range pcrs {
+// 			for j := i + 1; j < lp; j++ {
+// 				s2 := pcrs[j]
+// 				cp[j] = commonPrefix(s.Sequence, s2.Sequence)
+// 				cs[j] = commonSuffix(s.Sequence, s2.Sequence)
+// 			}
+
+// 			var cm map[string]string
+// 			var err error
+
+// 			chimera, ok := s.Sequence.GetAttribute("chimera")
+
+// 			if !ok {
+// 				cm = map[string]string{}
+// 			} else {
+// 				cm, err = obiutils.InterfaceToStringMap(chimera)
+// 				if err != nil {
+// 					log.Fatalf("type of chimera not map[string]string: %T (%v)",
+// 						chimera, err)
+// 				}
+// 			}
+
+// 			ls := s.Sequence.Len()
+
+// 			for k := i + 1; k < lp; k++ {
+// 				for l := i + 1; l < lp; l++ {
+// 					if k != l && cp[k]+cs[l] == ls {
+// 						cm[sample] = fmt.Sprintf("{%s}/{%s}@(%d)",
+// 							pcrs[k].Sequence.Id(),
+// 							pcrs[l].Sequence.Id(),
+// 							cp[k])
+// 					}
+// 				}
+// 			}
+
+// 			if len(cm) > 0 {
+// 				s.Sequence.SetAttribute("chimera", cm)
+// 			}
+// 		}
+
+// 	}
+
+// 	for sn, sqs := range samples {
+// 		w(sn, sqs)
+// 	}
+
+// }
